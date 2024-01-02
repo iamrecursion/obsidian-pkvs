@@ -1,96 +1,91 @@
-# Obsidian Sample Plugin
+# Persistent Key-Value Store for Obsidian
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+This plugin provides a persistent key-value store for use inside scripts in Obsidian. This means
+that you can persist data between runs of [Templater](https://github.com/SilentVoid13/Templater)
+templates or [Dataview](https://github.com/blacksmithgu/obsidian-dataview) (or
+[Datacore](https://github.com/blacksmithgu/datacore)) queries.
 
-This project uses Typescript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in Typescript Definition format, which contains TSDoc comments describing what it does.
+Note that this plugin uses eval under the hood in combination with
+[serialize-javascript](https://github.com/yahoo/serialize-javascript) to allow for serialization of
+rich JS objects. You must **never store or load untrusted data**, and **usage of this plugin is at
+your own risk**.
 
-**Note:** The Obsidian API is still in early alpha and is subject to change at any time!
+## Usage
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+This plugin is intended to be used from _other plugins_ (such as those mentioned above) that allow
+you to execute JavaScript code in the Obsidian JS virtual machine. It is not intended to be
+user-facing or provide a non-code interface outside of its settings. If you are not familiar with
+JavaScript, or its use to script Obsidian, this plugin is **not for you**.
 
-## First time developing plugins?
+### Interface
 
-Quick starting guide for new plugin devs:
+The data store is made available to you in the window scope under the name `window.pkvs` (implicitly
+accessible as `pkvs`). The operations available to you are given by the following interface.
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+```ts
+// The user-facing interface to the persistent key-value store.
+interface PKVS {
+  // Loads the value at `key` in the persistent data, returning the value if it exists or
+  // `undefined` otherwise.
+  async load(key: PropertyKey): Promise<any>;
 
-## Releasing new releases
+  // Stores the provided `value` at the provided `key` in the data store, returning the previous
+  // value at that `key` if it was previously written, or `undefined` otherwise.
+  //
+  // If eager persistence is on, this will write the changes to disk before returning.
+  async store(key: PropertyKey, value: any): Promise<any>;
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+  // Deletes any value at the provided `key`, returning the previous value if `key` was previously
+  // written, or `undefined` otherwise.
+  //
+  // If eager persistence is on, this will write the changes to disk before returning.
+  async delete(key: PropertyKey): Promise<any>;
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+  // Returns `true` if `key` exists in the data store, or `false` otherwise.
+  async exists(key: PropertyKey): Promise<boolean>;
 
-## Adding your plugin to the community plugin list
+  // Forces any in-memory changes to the data store to be written to disk. Once it has returned, the
+  // on-disk state and in-memory state are guaranteed to be the same.
+  async persist(): Promise<void>;
 
-- Check https://github.com/obsidianmd/obsidian-releases/blob/master/plugin-review.md
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+  // Sets the store to use lazy persistence regardless of the option in settings.
+  setLazyPersistance(): void;
 
-## How to use
+  // Sets the store to use eager persistence regardless of the option in settings.
+  setEagerPersistence(): void;
 
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
-
-## Manually installing the plugin
-
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
-
-## Improve code quality with eslint (optional)
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- To use eslint with this project, make sure to install eslint from terminal:
-  - `npm install -g eslint`
-- To use eslint to analyze this project use this command:
-  - `eslint main.ts`
-  - eslint will then create a report with suggestions for code improvement by file and line number.
-- If your source code is in a folder, such as `src`, you can use eslint with this command to analyze all files in that folder:
-  - `eslint .\src\`
-
-## Funding URL
-
-You can include funding URLs where people who use your plugin can financially support it.
-
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
-
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
+  // Sets the store to persist as specified by the option in settings.
+  disablePersistenceOverride(): void;
 ```
 
-If you have multiple URLs, you can also do:
+## Performance
 
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
-```
+If you are writing and reading lots of data or large data at once, you may want to enable the "Lazy
+Persistence" option in settings. This will only persist data to disk at app-close on a best-effort
+basis, and instead requires you to manually persist. You can also enable this option
+_programmatically_ by calling `setLazyPersistance` and `setEagerPersistence` as shown above. These
+will not change the setting for the plugin, but only the currently active behavior.
 
-## API Documentation
+Manual persistence can be performed by calling `persist` above and awaiting on the result to return
+to guarantee writing is complete, or running the "Persist Data" command from the command palette.
 
-See https://github.com/obsidianmd/obsidian-api
+> ### WARNING
+>
+> Please note that use of lazy persistence **may incur data loss** if you do not persist before
+> closing Obsidian. This is particularly relevant on mobile, where the app may be killed in the
+> background at any time.
+
+## Installation
+
+You can install the plugin using the following two installation methods.
+
+### Community Plugins
+
+Currently awaiting approval to be added to the community plugins registry.
+
+### BRAT
+
+1. Install [BRAT](https://github.com/TfTHacker/obsidian42-brat).
+2. In BRAT settings, select "Add Beta Plugin" and paste
+   `https://github.com/iamrecursion/obsidian-pkvs` as the URL.
+3. Go to the "Community Plugins" tab and enable the plugin.
