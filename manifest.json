@@ -1,7 +1,7 @@
 {
   "id": "pkvs",
   "name": "Persistent Key-Value Store",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "minAppVersion": "1.5.1",
   "description": "Provides a persistent key-value store for use in scripts in Obsidian.",
   "author": "Ara Adkins",

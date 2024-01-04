@@ -48,7 +48,7 @@ export default class PKVSPlugin extends Plugin {
 
     // Add a command to force saving by the plugin.
     this.addCommand({
-      id: "pkvs.persist",
+      id: "persist",
       name: "PKVS: Persist Data",
       repeatable: false,
       callback: async () => {
