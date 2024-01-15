@@ -49,7 +49,7 @@ export default class PKVSPlugin extends Plugin {
     // Add a command to force saving by the plugin.
     this.addCommand({
       id: "persist",
-      name: "PKVS: Persist Data",
+      name: "Persist Data",
       repeatable: false,
       callback: async () => {
         const plugin = this;
@@ -58,9 +58,11 @@ export default class PKVSPlugin extends Plugin {
     });
 
     // Make a best effort to save data when quitting Obsidian.
-    this.app.workspace.on("quit", async (_: Tasks) => {
-      await this.dataStore.storeData();
-    });
+    this.registerEvent(
+      this.app.workspace.on("quit", async (_: Tasks) => {
+        await this.dataStore.storeData();
+      }),
+    );
   }
 
   // Things that are done
@@ -100,12 +102,6 @@ class PKVSSettingsTab extends PluginSettingTab {
 
   display(): void {
     const { containerEl } = this;
-
-    containerEl.empty();
-    containerEl.createEl("h3", { text: "Performance" });
-    containerEl.createEl("p", {
-      text: "These settings are used to control the performance of the key-value store.",
-    });
 
     new Setting(containerEl)
       .setName("Lazy Persistence")
