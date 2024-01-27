@@ -89,3 +89,8 @@ Currently awaiting approval to be added to the community plugins registry.
 2. In BRAT settings, select "Add Beta Plugin" and paste
    `https://github.com/iamrecursion/obsidian-pkvs` as the URL.
 3. Go to the "Community Plugins" tab and enable the plugin.
+
+## Contributing
+
+If you are interested in contributing code, documentation, or ideas to this project, please take a
+look at the `[CONTRIBUTING](./CONTRIBUTING.md)` guide.
