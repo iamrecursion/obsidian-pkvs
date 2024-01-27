@@ -1,6 +1,6 @@
 {
   "name": "obsidian-pkvs",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Provides a persistent key-value store for use in scripts in Obsidian.",
   "main": "main.js",
   "scripts": {

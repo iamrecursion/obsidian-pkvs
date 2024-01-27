@@ -1,7 +1,7 @@
 {
   "id": "pkvs",
   "name": "Persistent Key-Value Store",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "minAppVersion": "1.5.1",
   "description": "Provides a persistent key-value store for use in scripts.",
   "author": "Ara Adkins",

@@ -102,6 +102,7 @@ class PKVSSettingsTab extends PluginSettingTab {
 
   display(): void {
     const { containerEl } = this;
+    containerEl.empty();
 
     new Setting(containerEl)
       .setName("Lazy Persistence")
