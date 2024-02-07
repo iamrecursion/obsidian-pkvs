@@ -3,9 +3,11 @@
 This plugin provides a persistent key-value store for use inside scripts in Obsidian. This means
 that you can persist data between runs of [Templater](https://github.com/SilentVoid13/Templater)
 templates or [Dataview](https://github.com/blacksmithgu/obsidian-dataview) (or
-[Datacore](https://github.com/blacksmithgu/datacore)) queries.
+[Datacore](https://github.com/blacksmithgu/datacore)) queries. Not only that, but you can also
+persist data across sync services that sync the plugin's `data.json`; this means persistence of
+saved state between devices using the same vault.
 
-Note that this plugin uses eval under the hood in combination with
+Note that this plugin uses `eval` under the hood in combination with
 [serialize-javascript](https://github.com/yahoo/serialize-javascript) to allow for serialization of
 rich JS objects. You must **never store or load untrusted data**, and **usage of this plugin is at
 your own risk**.
@@ -81,7 +83,10 @@ You can install the plugin using the following two installation methods.
 
 ### Community Plugins
 
-Currently awaiting approval to be added to the community plugins registry.
+1. Go to Settings and select the Community Plugins tab.
+2. Open the Browse view, and search for "Persistent Key-Value Store".
+3. Select this plugin, and press "Install" and then "Enable".
+4. It should now work!
 
 ### BRAT
 
@@ -93,4 +98,4 @@ Currently awaiting approval to be added to the community plugins registry.
 ## Contributing
 
 If you are interested in contributing code, documentation, or ideas to this project, please take a
-look at the `[CONTRIBUTING](./CONTRIBUTING.md)` guide.
+look at the [CONTRIBUTING](./CONTRIBUTING.md) guide.
