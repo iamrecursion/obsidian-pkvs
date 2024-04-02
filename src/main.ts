@@ -10,7 +10,7 @@ import {
   ToggleComponent,
 } from "obsidian";
 
-import serializeJS from "serialize-javascript";
+import { serializeJS } from "./serialize";
 
 import erudaBenchmark from "eruda-benchmark";
 import erudaCode from "eruda-code";
