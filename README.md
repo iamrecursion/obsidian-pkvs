@@ -1,8 +1,9 @@
 # Persistent Key-Value Store for Obsidian
 
-This plugin provides a persistent key-value store for use inside scripts in Obsidian. This means
-that you can persist data between runs of [Templater](https://github.com/SilentVoid13/Templater)
-templates or [Dataview](https://github.com/blacksmithgu/obsidian-dataview) (or
+This plugin provides a persistent key-value store for use inside scripts in Obsidian, as well as a
+portable [web inspector](#web-inspector) to aid in debugging. This means that you can persist data
+between runs of [Templater](https://github.com/SilentVoid13/Templater) templates or
+[Dataview](https://github.com/blacksmithgu/obsidian-dataview) (or
 [Datacore](https://github.com/blacksmithgu/datacore)) queries. Not only that, but you can also
 persist data across sync services that sync the plugin's `data.json`; this means persistence of
 saved state between devices using the same vault.
@@ -59,6 +60,19 @@ interface PKVS {
   // Sets the store to persist as specified by the option in settings.
   disablePersistenceOverride(): void;
 ```
+
+## Web Inspector
+
+Sometimes it is useful to be able to evaluate JavaScript to access this persistent store without
+having to write a DVJS query or Templater template. To that end, this plugin includes the
+[Eruda](https://github.com/liriliri/eruda) portable web-inspector front-end.
+
+When opening the inspector (using the command palette), you will see the console by default. In
+settings, you can enable additional tabs, such as a DOM tree, network request and resource
+monitoring, sources viewing, performance and timing graphs, and so on. Please see the settings
+themselves for descriptions of what each tab gives you.
+
+This function is useful for general development, not just interacting with the persistent store.
 
 ## Performance
 
