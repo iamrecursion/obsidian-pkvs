@@ -25,5 +25,5 @@
     "strict": true,
     "useUnknownInCatchVariables": true
   },
-  "include": ["**/*.ts"]
+  "include": ["src/**.ts"]
 }
